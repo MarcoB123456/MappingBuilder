@@ -1,0 +1,17 @@
+{
+  "firstName": "Marco",
+  "lastName": "Bergsma",
+  "age": 23,
+  "title": "The esteemed venerable buddy guy",
+  "processed": "False",
+  "address": {
+    "street": "Rijksstraatweg 104B",
+    "city": "Haarlem",
+    "country": "The Netherlands"
+  },
+  "conditional": {
+    "use_a": true,
+    "conditional_a": "a value",
+    "conditional_b": "b value"
+  }
+}

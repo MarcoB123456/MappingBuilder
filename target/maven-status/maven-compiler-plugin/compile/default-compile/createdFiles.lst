@@ -1,0 +1,12 @@
+org\mapper\output\OrderMapper.class
+org\mapper\config\Mapping.class
+org\mapper\MappingClassBuilder.class
+org\mapper\builder\DataMapper.class
+org\mapper\builder\Conditional.class
+org\mapper\Main.class
+org\mapper\config\Configuration.class
+org\mapper\builder\Action.class
+org\mapper\builder\MappingBuilder.class
+org\mapper\MappingClassBuilder$StepComparator.class
+org\mapper\config\Step.class
+org\mapper\Helper.class

@@ -1,0 +1,211 @@
+{
+  "className": "OrderMapper",
+  "predicates": [
+    {
+      "name": "A",
+      "groups": [
+        {
+          "operator": "AND",
+          "statements": [
+            {
+              "index": 0,
+              "type": "NOTNULL",
+              "inputPath": "conditional/use_a"
+            },
+            {
+              "index": 1,
+              "type": "EQUALS",
+              "inputPath": "conditional/use_a",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "firstName"
+        },
+        {
+          "index": 1,
+          "type": "INSERT",
+          "outputPath": "first_name"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "lastName"
+        },
+        {
+          "index": 1,
+          "type": "INSERT",
+          "outputPath": "last_name"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "address/street"
+        },
+        {
+          "index": 1,
+          "type": "SPLIT",
+          "splitPattern": " "
+        },
+        {
+          "index": 2,
+          "type": "INSERT",
+          "splitIndex": 0,
+          "outputPath": "address/street"
+        },
+        {
+          "index": 3,
+          "type": "INSERT",
+          "splitIndex": 1,
+          "outputPath": "address/number"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "address/city"
+        },
+        {
+          "index": 1,
+          "type": "INSERT",
+          "outputPath": "address/city"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "INSERT",
+          "constant": true,
+          "value": 12345,
+          "outputPath": "id"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "nothing"
+        },
+        {
+          "index": 1,
+          "type": "INSERT",
+          "outputPath": "nothing"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "address/country"
+        },
+        {
+          "index": 1,
+          "type": "NOTNULL"
+        },
+        {
+          "index": 2,
+          "type": "INSERT",
+          "outputPath": "address/country"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "processed"
+        },
+        {
+          "index": 1,
+          "type": "INSERT",
+          "outputPath": "processed",
+          "outputType": "BOOLEAN"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "title"
+        },
+        {
+          "index": 1,
+          "type": "CONTAINS",
+          "value": "The esteemed"
+        },
+        {
+          "index": 2,
+          "type": "SUBSTRING",
+          "beginIndex": 0,
+          "endIndex": 10
+        },
+        {
+          "index": 3,
+          "type": "INSERT",
+          "outputPath": "title"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "conditional/conditional_a",
+          "conditionalName": "A",
+          "conditionalResult": true
+        },
+        {
+          "index": 1,
+          "type": "INSERT",
+          "outputPath": "conditional/result"
+        }
+      ]
+    },
+    {
+      "steps": [
+        {
+          "index": 0,
+          "type": "READ",
+          "inputPath": "conditional/conditional_b",
+          "conditionalName": "A",
+          "conditionalResult": false
+        },
+        {
+          "index": 1,
+          "type": "INSERT",
+          "outputPath": "conditional/result"
+        }
+      ]
+    }
+  ]
+}
