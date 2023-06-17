@@ -1,18 +1,13 @@
 package org.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapper.builder.MappingBuilder;
+import org.mapper.test.MappingTest;
 
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-class PredicateTest {
+class PredicateTest extends MappingTest {
 
     String json = """
             {
@@ -30,33 +25,23 @@ class PredicateTest {
               }
             }""";
 
-    private ObjectMapper objectMapper;
-    private MappingBuilder mappingBuilder;
-
 
     @BeforeEach
     void setup() throws JsonProcessingException {
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-        Map<String, Object> inputMap = this.objectMapper.readValue(json, HashMap.class);
-        this.mappingBuilder = new MappingBuilder(inputMap, new HashMap<>());
+        super.init(json);
     }
 
 
     @Test
-    void test() {
-        boolean result = mappingBuilder.startPredicateMapper("firstName").equals("Marco");
+    void testIsEqualTo() {
+        boolean result = predicate("firstName").isEqualTo("Marco");
 
-        assertEquals(true, result);
+        assertTrue(result);
     }
 
 
 
     private String normalize(String input) {
         return input.replaceAll("[\\r\\n]+", "");
-    }
-
-    private String build() throws JsonProcessingException {
-        return this.mappingBuilder.build(this.objectMapper);
     }
 }

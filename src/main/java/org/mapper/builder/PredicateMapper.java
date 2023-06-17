@@ -1,5 +1,6 @@
 package org.mapper.builder;
 
+
 import org.mapper.Helper;
 
 import java.util.Map;
@@ -12,8 +13,9 @@ public class PredicateMapper extends Conditional {
     private Object value;
 
     public PredicateMapper(Map<String, Object> inputMap, String inputPath) {
-        this.inputMap = inputMap;
         this.value = Helper.getValue(inputMap, inputPath);
+
+        this.inputMap = inputMap;
         this.inputPath = inputPath;
     }
 

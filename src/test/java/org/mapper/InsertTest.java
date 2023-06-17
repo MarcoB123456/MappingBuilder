@@ -1,19 +1,16 @@
 package org.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mapper.builder.MappingBuilder;
+import org.mapper.test.MappingTest;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class InsertTest {
+class InsertTest extends MappingTest {
 
     String json = """
             {
@@ -24,6 +21,7 @@ class InsertTest {
               "title": "The esteemed venerable buddy guy",
               "processed": false,
               "boolValue": "False",
+              "types": ["A", "B", "C"],
               "address": {
                 "street": "Rijksstraatweg 104B",
                 "city": "Haarlem",
@@ -31,16 +29,10 @@ class InsertTest {
               }
             }""";
 
-    private ObjectMapper objectMapper;
-    private MappingBuilder mappingBuilder;
-
 
     @BeforeEach
     void setup() throws JsonProcessingException {
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-        Map<String, Object> inputMap = this.objectMapper.readValue(json, HashMap.class);
-        this.mappingBuilder = new MappingBuilder(inputMap, new HashMap<>());
+        super.init(json);
     }
 
     @Nested
@@ -48,8 +40,8 @@ class InsertTest {
 
         @Test
         void testInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("firstName").insertValue("first_name", null);
-            mappingBuilder.startDataMap().setValue("lastName").insertValue("last_name", null);
+            read("firstName").insert("first_name");
+            read("lastName").insert("last_name");
             String result = build();
 
             assertEquals(normalize("""
@@ -65,9 +57,9 @@ class InsertTest {
 
         @Test
         void testInsertConstant() throws Exception {
-            mappingBuilder.startDataMap().setValue("firstName").insertValue("first_name", null);
-            mappingBuilder.startDataMap().setValue("lastName").insertValue("last_name", null);
-            mappingBuilder.startDataMap().insertValue("middle_name", "Jeffrey", null);
+            read("firstName").insert("first_name");
+            read("lastName").insert("last_name");
+            insert("middle_name", "Jeffrey");
             String result = build();
 
             assertEquals(normalize("""
@@ -84,7 +76,7 @@ class InsertTest {
 
         @Test
         void testNullInputInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("middleName").insertValue("middle_name", null);
+            read("middleName").insert("middle_name");
             String result = build();
 
             assertEquals(normalize("""
@@ -99,7 +91,7 @@ class InsertTest {
 
         @Test
         void testNumericInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("age").insertValue("age", null);
+            read("age").insert("age");
             String result = build();
 
             assertEquals(normalize("""
@@ -114,7 +106,7 @@ class InsertTest {
 
         @Test
         void testBooleanInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("processed").insertValue("processed", null);
+            read("processed").insert("processed");
             String result = build();
 
             assertEquals(normalize("""
@@ -129,7 +121,7 @@ class InsertTest {
 
         @Test
         void testMultiPathInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("address/city").insertValue("address/city", null);
+            read("address.city").insert("address.city");
             String result = build();
 
             assertEquals(normalize("""
@@ -144,6 +136,23 @@ class InsertTest {
             System.out.println(result);
         }
 
+        @Test
+        void testListInsert() throws Exception {
+            read("types").insert("types");
+            String result = build();
+
+            assertEquals(normalize("""
+                    {
+                      "types" : [ "A", "B", "C" ]
+                    }"""), normalize(result));
+
+
+            System.out.println("================== RESULT ==================");
+            System.out.println(result);
+        }
+
+
+
     }
 
     @Nested
@@ -151,7 +160,7 @@ class InsertTest {
 
         @Test
         void testStringInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("processed").insertValue("processed", "STRING");
+            read("processed").insert("processed", String.class);
             String result = build();
 
             assertEquals(normalize("""
@@ -166,7 +175,7 @@ class InsertTest {
 
         @Test
         void testIntegerInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("value").insertValue("value", "INTEGER");
+            read("value").insert("value", Integer.class);
             String result = build();
 
             assertEquals(normalize("""
@@ -181,7 +190,7 @@ class InsertTest {
 
         @Test
         void testBooleanInsert() throws Exception {
-            mappingBuilder.startDataMap().setValue("boolValue").insertValue("boolValue", "BOOLEAN");
+            read("boolValue").insert("boolValue", Boolean.class);
             String result = build();
 
             assertEquals(normalize("""
@@ -194,13 +203,24 @@ class InsertTest {
             System.out.println(result);
         }
 
+        @Test
+        void testListOneValueInsert() throws Exception {
+            read("firstName").insert("firstNameList", List.class);
+            String result = build();
+
+            assertEquals(normalize("""
+                    {
+                      "firstNameList" : [ "Marco" ]
+                    }"""), normalize(result));
+
+
+            System.out.println("================== RESULT ==================");
+            System.out.println(result);
+        }
+
     }
 
     private String normalize(String input) {
         return input.replaceAll("[\\r\\n]+", "");
-    }
-
-    private String build() throws JsonProcessingException {
-        return this.mappingBuilder.build(this.objectMapper);
     }
 }

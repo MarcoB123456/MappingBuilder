@@ -1,20 +1,15 @@
 package org.mapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mapper.builder.MappingBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.mapper.test.MappingTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ActionTest {
+class ActionTest extends MappingTest {
 
     String json = """
             {
@@ -32,16 +27,9 @@ class ActionTest {
               }
             }""";
 
-    private ObjectMapper objectMapper;
-    private MappingBuilder mappingBuilder;
-
-
     @BeforeEach
     void setup() throws JsonProcessingException {
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-        Map<String, Object> inputMap = this.objectMapper.readValue(json, HashMap.class);
-        this.mappingBuilder = new MappingBuilder(inputMap, new HashMap<>());
+        super.init(json);
     }
 
 
@@ -50,9 +38,9 @@ class ActionTest {
 
         @Test
         void testSplit() throws Exception {
-            mappingBuilder.startDataMap().setValue("address/street").split(" ")
-                    .insertValue("address/street", 0, null)
-                    .insertValue("address/number", 1, null);
+            read("address.street").split(" ")
+                    .insert("address.street", 0)
+                    .insert("address.number", 1);
             String result = build();
 
             assertEquals(normalize("""
@@ -71,10 +59,10 @@ class ActionTest {
         @Test
         void testOutOfBoundSplit() {
             String message = assertThrows(Exception.class,
-                    () -> mappingBuilder.startDataMap().setValue("address/street").split(" ")
-                            .insertValue("address/street", 0, null)
-                            .insertValue("address/number", 1, null)
-                            .insertValue("address/additional", 2, null)).getMessage();
+                    () -> read("address.street").split(" ")
+                            .insert("address.street", 0)
+                            .insert("address.number", 1)
+                            .insert("address.additional", 2)).getMessage();
 
             assertEquals("Index [2] does not exist. Size after split is: [2]", message);
         }
@@ -86,11 +74,11 @@ class ActionTest {
 
         @Test
         void testNonNull() throws Exception {
-            mappingBuilder.startDataMap().setValue("address/street").split(" ")
+            read("address.street").split(" ")
                     .notNull(0)
                     .notNull(1)
-                    .insertValue("address/street", 0, null)
-                    .insertValue("address/number", 1, null);
+                    .insert("address.street", 0)
+                    .insert("address.number", 1);
             String result = build();
 
             assertEquals(normalize("""
@@ -109,7 +97,7 @@ class ActionTest {
         @Test
         void testNull() {
             String message = assertThrows(NullPointerException.class,
-                    () -> mappingBuilder.startDataMap().setValue("nullValue").split(" ")
+                    () -> read("nullValue").split(" ")
                             .notNull(0)).getMessage();
 
             assertEquals("Value with path: [nullValue] is null", message);
@@ -118,9 +106,5 @@ class ActionTest {
 
     private String normalize(String input) {
         return input.replaceAll("[\\r\\n]+", "");
-    }
-
-    private String build() throws JsonProcessingException {
-        return this.mappingBuilder.build(this.objectMapper);
     }
 }

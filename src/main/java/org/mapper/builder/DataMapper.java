@@ -1,5 +1,6 @@
 package org.mapper.builder;
 
+
 import org.mapper.Helper;
 
 import java.util.Map;
@@ -12,9 +13,11 @@ public class DataMapper extends Conditional implements Action {
     private final Map<String, Object> inputMap;
     private final Map<String, Object> outputMap;
 
-    public DataMapper(Map<String, Object> inputMap, Map<String, Object> outputMap) {
+    public DataMapper(Map<String, Object> inputMap, Map<String, Object> outputMap, String inputPath) {
         this.inputMap = inputMap;
         this.outputMap = outputMap;
+
+        setValue(inputPath);
     }
 
     public DataMapper notNull() {
@@ -67,7 +70,7 @@ public class DataMapper extends Conditional implements Action {
 
     public DataMapper setValue(String inputPath) {
         this.inputPath = inputPath;
-        this.value = Helper.getValue(inputMap, inputPath);
+        this.value = Helper.getValue(this.inputMap, inputPath);
         return this;
     }
 
@@ -83,16 +86,19 @@ public class DataMapper extends Conditional implements Action {
     }
 
 
+    public void insert(String outputPath) throws Exception {
+        Helper.insertValue(this.outputMap, outputPath, this.value, null);
+    }
 
-    public DataMapper insertValue(String outputPath, String outputType) throws Exception {
+    public void insert(String outputPath, Class outputType) throws Exception {
         Helper.insertValue(this.outputMap, outputPath, this.value, outputType);
-        return this;
     }
 
-    public DataMapper insertValue(String outputPath, Object outputValue, String outputType) throws Exception {
+    public void insert(String outputPath, Object outputValue, Class outputType) throws Exception {
         Helper.insertValue(this.outputMap, outputPath, outputValue, outputType);
-        return this;
     }
+
+
 
     protected Object getValue() {
         return this.value;

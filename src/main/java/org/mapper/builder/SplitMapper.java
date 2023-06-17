@@ -21,8 +21,13 @@ public class SplitMapper extends Conditional {
         }
     }
 
-    public SplitMapper insertValue(String outputPath, int splitIndex, String outputType) throws Exception {
-        dataMapper.insertValue(outputPath, getValueByIndex(splitIndex), outputType);
+    public SplitMapper insert(String outputPath, int splitIndex, Class outputType) throws Exception {
+        dataMapper.insert(outputPath, getValueByIndex(splitIndex), outputType);
+        return this;
+    }
+
+    public SplitMapper insert(String outputPath, int splitIndex) throws Exception {
+        dataMapper.insert(outputPath, getValueByIndex(splitIndex), null);
         return this;
     }
 

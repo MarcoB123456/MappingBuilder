@@ -1,12 +1,13 @@
 package org.mapper;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Helper {
 
-    public static void insertValue(Map<String, Object> outputMap, String outputName, Object inputValue, String outputType) throws Exception {
-        String[] outputNamePath = outputName.split("/");
+    public static void insertValue(Map<String, Object> outputMap, String outputName, Object inputValue, Class outputType) throws Exception {
+        String[] outputNamePath = outputName.split("\\.");
 
         if (outputType != null) {
             inputValue = convertValueTo(inputValue, outputType);
@@ -34,22 +35,21 @@ public class Helper {
         }
     }
 
-    private static Object convertValueTo(Object inputValue, String outputType) throws Exception {
+    private static Object convertValueTo(Object inputValue, Class outputType) throws Exception {
         try {
-
-            switch (outputType) {
-                case "STRING":
-                    inputValue = String.valueOf(inputValue);
-                    break;
-                case "INTEGER":
-                    inputValue = Integer.valueOf(String.valueOf(inputValue));
-                    break;
-                case "BOOLEAN":
-                    inputValue = Boolean.valueOf(String.valueOf(inputValue));
-                    break;
+            if (outputType.equals(String.class)) {
+                inputValue = String.valueOf(inputValue);
+            } else if (outputType.equals(Integer.class)) {
+                inputValue = Integer.valueOf(String.valueOf(inputValue));
+            } else if (outputType.equals(Boolean.class)) {
+                inputValue = Boolean.valueOf(String.valueOf(inputValue));
+            } else if (outputType.equals(List.class)) {
+                inputValue = List.of(inputValue);
+            } else {
+                throw new Exception("OutputType of: " + outputType.getTypeName() + " is not supported");
             }
         } catch (Exception ex) {
-            throw new Exception("Failed to convert value to " + outputType);
+            throw new Exception("Failed to convert value to " + outputType, ex);
         }
 
 
@@ -57,7 +57,7 @@ public class Helper {
     }
 
     public static Object getValue(Map<String, Object> inputMap, String inputName) {
-        String[] inputNamePath = inputName.split("/");
+        String[] inputNamePath = inputName.split("\\.");
 
         if (inputNamePath.length == 1) {
             return inputMap.get(inputName);
