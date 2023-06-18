@@ -1,6 +1,6 @@
 package org.mapper.test;
 
-import org.mapper.builder.MappingBuilder;
+import org.mapper.builder.mapper.MappingBuilder;
 
 public class MappingTest extends MappingBuilder {
     @Override

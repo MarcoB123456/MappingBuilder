@@ -38,7 +38,7 @@ class ActionTest extends MappingTest {
 
         @Test
         void testSplit() throws Exception {
-            read("address.street").split(" ")
+            readString("address.street").split(" ")
                     .insert("address.street", 0)
                     .insert("address.number", 1);
             String result = build();
@@ -59,7 +59,7 @@ class ActionTest extends MappingTest {
         @Test
         void testOutOfBoundSplit() {
             String message = assertThrows(Exception.class,
-                    () -> read("address.street").split(" ")
+                    () -> readString("address.street").split(" ")
                             .insert("address.street", 0)
                             .insert("address.number", 1)
                             .insert("address.additional", 2)).getMessage();
@@ -74,9 +74,9 @@ class ActionTest extends MappingTest {
 
         @Test
         void testNonNull() throws Exception {
-            read("address.street").split(" ")
-                    .notNull(0)
-                    .notNull(1)
+            readString("address.street").split(" ")
+                    .isNotNull(0)
+                    .isNotNull(1)
                     .insert("address.street", 0)
                     .insert("address.number", 1);
             String result = build();
@@ -97,8 +97,8 @@ class ActionTest extends MappingTest {
         @Test
         void testNull() {
             String message = assertThrows(NullPointerException.class,
-                    () -> read("nullValue").split(" ")
-                            .notNull(0)).getMessage();
+                    () -> readString("nullValue").split(" ")
+                            .isNotNull(0)).getMessage();
 
             assertEquals("Value with path: [nullValue] is null", message);
         }

@@ -39,7 +39,7 @@ class ConditionalTest extends MappingTest {
 
         @Test
         void testNonNull() throws Exception {
-            read("firstName").notNull().insert("first_name");
+            read("firstName").isNotNull().insert("first_name");
             String result = build();
 
             assertEquals(normalize("""
@@ -55,7 +55,7 @@ class ConditionalTest extends MappingTest {
         @Test
         void testNull() {
             String message = assertThrows(Exception.class,
-                    () -> read("nullField").notNull().insert("null_field")).getMessage();
+                    () -> read("nullField").isNotNull().insert("null_field")).getMessage();
 
             assertEquals("Value with path: [nullField] is null", message);
         }
@@ -66,7 +66,7 @@ class ConditionalTest extends MappingTest {
 
         @Test
         void testContains() throws Exception {
-            read("title").contains("The esteemed").insert("title");
+            readString("title").contains("The esteemed").insert("title");
             String result = build();
 
             assertEquals(normalize("""
@@ -81,7 +81,7 @@ class ConditionalTest extends MappingTest {
 
         @Test
         void testContainsIgnoreCase() throws Exception {
-            read("title").containsIgnoreCase("the esteemed").insert("title");
+            readString("title").containsIgnoreCase("the esteemed").insert("title");
             String result = build();
 
             assertEquals(normalize("""
@@ -97,7 +97,7 @@ class ConditionalTest extends MappingTest {
         @Test
         void testNotContains() throws Exception {
             String message = assertThrows(Exception.class,
-                    () -> read("title").contains("Hello world").insert("title")).getMessage();
+                    () -> readString("title").contains("Hello world").insert("title")).getMessage();
 
             assertEquals("Value: [The esteemed venerable buddy guy] from path: [title] does not contain: [Hello world]", message);
         }
@@ -105,7 +105,7 @@ class ConditionalTest extends MappingTest {
         @Test
         void testNotContainsIgnoreCase() throws Exception {
             String message = assertThrows(Exception.class,
-                    () -> read("title").containsIgnoreCase("Hello world").insert("title")).getMessage();
+                    () -> readString("title").containsIgnoreCase("Hello world").insert("title")).getMessage();
 
             assertEquals("Value: [The esteemed venerable buddy guy] from path: [title] does not containIgnoreCase: [Hello world]", message);
         }
@@ -140,14 +140,14 @@ class ConditionalTest extends MappingTest {
         @Test
         void testNotEqualsIgnoreCase() {
             String message = assertThrows(Exception.class,
-                    () -> read("title").isEqualToIgnoreCase("Hello world").insert("title")).getMessage();
+                    () -> readString("title").isEqualToIgnoreCase("Hello world").insert("title")).getMessage();
 
             assertEquals("Value: [The esteemed venerable buddy guy] does not equalIgnoreCase: [Hello world]", message);
         }
 
         @Test
         void testEqualsIgnoreCase() throws Exception {
-            read("title").isEqualToIgnoreCase("The estEemeD veNerablE BUDDY guy").insert("title");
+            readString("title").isEqualToIgnoreCase("The estEemeD veNerablE BUDDY guy").insert("title");
             String result = build();
 
             assertEquals(normalize("""

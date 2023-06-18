@@ -106,7 +106,7 @@ class InsertTest extends MappingTest {
 
         @Test
         void testBooleanInsert() throws Exception {
-            read("processed").insert("processed");
+            readBoolean("processed").insert("processed");
             String result = build();
 
             assertEquals(normalize("""
